@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="Controls.Views.DateSelectorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Controls.Views"
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:Controls.ViewModels"
+             d:DataContext="{d:DesignInstance vm:DateSelectorViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <!-- 日期卡片基础样式 -->
+        <Style x:Key="DayItemBorderStyle" TargetType="Border">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="CornerRadius" Value="17"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Background" Value="#50D4D8"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 日期文字基础样式 -->
+        <Style x:Key="DayTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#333333"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 左右切换按钮样式 -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F0F0F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 去掉 Button 的默认 Padding，让内层 Border 完美展示圆形 -->
+        <Style x:Key="DayItemButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" 
+            Background="White" Margin="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 1. 左箭头 -->
+            <Button Grid.Column="0" Style="{StaticResource NavButtonStyle}" 
+                    Content="&lt;" Command="{Binding PreviousWeekCommand}"/>
+
+            <!-- 用 ScrollViewer 包裹 ItemsControl，防止天数过多撑爆 UI -->
+            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" 
+                          VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
+                <ItemsControl ItemsSource="{Binding Days}" HorizontalAlignment="Stretch" MinWidth="322">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource DayItemButtonStyle}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Command="{Binding DataContext.SelectDayCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" 
+                                    CommandParameter="{Binding}">
+                                <Border Style="{StaticResource DayItemBorderStyle}">
+                                    <TextBlock Text="{Binding DayText}" Style="{StaticResource DayTextStyle}"/>
+                                </Border>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- 3. 右箭头 -->
+            <Button Grid.Column="2" Style="{StaticResource NavButtonStyle}" 
+                    Content="&gt;" Command="{Binding NextWeekCommand}" Margin="2,0,5,0"/>
+
+            <!-- 4. 右侧的当前日期文字 -->
+            <TextBlock Grid.Column="3" Text="{Binding CurrentDateText}" 
+                       VerticalAlignment="Center" FontSize="15" FontWeight="Medium" 
+                       Foreground="#333333" Margin="5,0,10,0"/>
+        </Grid>
+    </Border>
+</UserControl>

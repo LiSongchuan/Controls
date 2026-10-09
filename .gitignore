@@ -1,0 +1,15 @@
+# Visual Studio 临时文件
+.vs/
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.pdb
+
+# Rider / VS Code
+.idea/
+.vscode/
