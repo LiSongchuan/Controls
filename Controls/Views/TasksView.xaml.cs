@@ -23,6 +23,7 @@ namespace Controls.Views
         public TasksView()
         {
             InitializeComponent();
+            DataContext = new ViewModels.TasksViewModel();
         }
     }
 }

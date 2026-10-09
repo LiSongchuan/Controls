@@ -6,7 +6,96 @@
              xmlns:local="clr-namespace:Controls.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <!-- 外层卡片：白色背景 + 圆角 + 内边距 -->
+    <Border Background="White" CornerRadius="8" Padding="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题 -->
+            <TextBlock Grid.Row="0" Text="今日日程" FontSize="16" FontWeight="Bold" 
+                       Foreground="#333333" Margin="0,0,0,15"/>
+
+            <!-- 列表容器：带 ScrollViewer，防止日程过多撑爆界面 -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled">
+                <!-- ItemsSource 绑定到外部的集合，这里直接用 {Binding} 代表当前 DataContext -->
+                <ItemsControl ItemsSource="{Binding}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 时间区域 -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding StartTime, StringFormat='{}{0:HH:mm}'}" FontSize="13" FontWeight="SemiBold" Foreground="#333"/>
+                                    <TextBlock Text="{Binding EndTime, StringFormat='-{0:HH:mm}'}" FontSize="11" Foreground="Gray" Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <!-- 左侧彩色线条：根据 Status 自动变色 -->
+                                <Border Grid.Column="1" Width="4" CornerRadius="2" Margin="0,0,10,0" VerticalAlignment="Stretch" MinHeight="40">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <!-- 默认颜色（灰色） -->
+                                            <Setter Property="Background" Value="#E0E0E0"/>
+                                            <Style.Triggers>
+                                                <!-- 已结束：青色 -->
+                                                <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                    <Setter Property="Background" Value="#50D4D8"/>
+                                                </DataTrigger>
+                                                <!-- 进行中：紫色 -->
+                                                <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                    <Setter Property="Background" Value="#9B51E0"/>
+                                                </DataTrigger>
+                                                <!-- 准备中：橙色 -->
+                                                <DataTrigger Binding="{Binding Status}" Value="Preparing">
+                                                    <Setter Property="Background" Value="#FFC107"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+
+                                <!-- 内容区域 -->
+                                <StackPanel Grid.Column="2" VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="#333"/>
+
+                                    <!-- 【修改2】描述 + 状态文字 组合 -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                        <!-- 地点描述（线上） -->
+                                        <TextBlock Text="{Binding Description}" FontSize="12" Foreground="Gray"/>
+                                        <!-- 分隔符 -->
+                                        <TextBlock Text="·" FontSize="12" Foreground="Gray" Margin="4,0"/>
+                                        <!-- 状态文字（通过 DataTrigger 动态改变） -->
+                                        <TextBlock FontSize="12" Foreground="Gray">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <!-- 默认显示“准备中” -->
+                                                    <Setter Property="Text" Value="准备中"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                            <Setter Property="Text" Value="已结束"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                            <Setter Property="Text" Value="进行中"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
 </UserControl>

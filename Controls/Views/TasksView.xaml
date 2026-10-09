@@ -7,6 +7,26 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <local:DateSelectorView Grid.Column="0" DataContext="{Binding DateSelector}"/>
+            <Button Content="创建" Grid.Column="1" Width="40"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <local:ScheduleListView DataContext="{Binding TodaySchedules}" Grid.Column="0"/>
+            <local:TodoListView DataContext="{Binding }" Grid.Column="1"/>
+        </Grid>
     </Grid>
 </UserControl>

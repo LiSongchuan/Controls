@@ -23,7 +23,6 @@ namespace Controls.Views
         public DateSelectorView()
         {
             InitializeComponent();
-            DataContext = new ViewModels.DateSelectorViewModel();
         }
     }
 }

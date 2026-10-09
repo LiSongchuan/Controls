@@ -6,7 +6,135 @@
              xmlns:local="clr-namespace:Controls.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <Border Background="White" CornerRadius="8">
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- 1. 标题与进度区域 -->
+            <Grid Grid.Row="0" Margin="0,0,0,15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <TextBlock Text="待办清单" FontSize="16" FontWeight="Bold" Foreground="#333" VerticalAlignment="Center"/>
+                    <Border Background="#F0F0F0" CornerRadius="10" Padding="6,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TotalCount}" FontSize="12" Foreground="#666"/>
+                    </Border>
+                    <TextBlock Text="管理" Foreground="#00B4D8" FontSize="12" HorizontalAlignment="Right" Margin="0,0,5,0" Cursor="Hand"/>
+                </StackPanel>
+
+                <!-- 进度条区域 -->
+                <Grid Grid.Row="1" Margin="0,10,0,0">
+                    <ProgressBar Value="{Binding CompletedCount}" Maximum="{Binding TotalCount}" Height="6" Foreground="#00E676" Background="#E0E0E0" VerticalAlignment="Center" BorderThickness="0"/>
+                    <TextBlock Text="{Binding ProgressText}" HorizontalAlignment="Right" Margin="0,-18,0,0" FontSize="12" Foreground="Gray"/>
+                </Grid>
+            </Grid>
+
+            <!-- 2. 列表区域 (带分组) -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding GroupedTodos}">
+                    <!-- 2.1 分组样式：渲染 "紧急 1" 这样的标题 -->
+                    <ItemsControl.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,8">
+                                        <!-- 小圆点 -->
+                                        <Ellipse Width="6" Height="6" Fill="#FF5252" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="#FF5252"/>
+                                                    <!-- 默认红色 -->
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Name}" Value="普通">
+                                                            <Setter Property="Fill" Value="#00B4D8"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Name}" Value="个人">
+                                                            <Setter Property="Fill" Value="#9B51E0"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                        <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold" Foreground="#555"/>
+                                        <TextBlock Text="{Binding ItemCount}" FontSize="12" Foreground="Gray" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ItemsControl.GroupStyle>
+
+                    <!-- 2.2 具体的待办卡片模板 -->
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,0,0,10" Padding="12" Background="#F8F9FA" CornerRadius="6" BorderBrush="#EEEEEE" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 复选框 -->
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding IsCompleted}" VerticalAlignment="Top" Margin="0,2,10,0"/>
+
+                                    <!-- 内容 -->
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" Foreground="#333" TextTrimming="CharacterEllipsis"/>
+
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <!-- 优先级标签 -->
+                                            <Border CornerRadius="4" Padding="6,2" Margin="0,0,10,0">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#FFCDD2"/>
+                                                        <!-- 紧急：浅红 -->
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding PriorityText}" Value="普通">
+                                                                <Setter Property="Background" Value="#B3E5FC"/>
+                                                                <!-- 普通：浅蓝 -->
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding PriorityText}" Value="个人">
+                                                                <Setter Property="Background" Value="#E1BEE7"/>
+                                                                <!-- 个人：浅紫 -->
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding PriorityText}" FontSize="10" Foreground="#D32F2F">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#D32F2F"/>
+                                                            <!-- 紧急：深红 -->
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding PriorityText}" Value="普通">
+                                                                    <Setter Property="Foreground" Value="#0277BD"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding PriorityText}" Value="个人">
+                                                                    <Setter Property="Foreground" Value="#7B1FA2"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+
+                                            <!-- 截止时间 -->
+                                            <TextBlock Text="{Binding DueTime, StringFormat='yyyy-MM-dd HH:mm'}" FontSize="11" Foreground="Gray" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+        </Grid>
+    </Border>
 </UserControl>

@@ -7,7 +7,9 @@
         xmlns:views="clr-namespace:Controls.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid Height="60">
-        <views:DateSelectorView  Height="auto" Width="550"/>
+    <Grid>
+        <!--<views:DateSelectorView  Height="auto" Width="550"/>-->
+
+        <views:TasksView Height="auto"/>
     </Grid>
 </Window>
