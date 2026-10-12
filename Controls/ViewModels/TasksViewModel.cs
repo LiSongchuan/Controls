@@ -71,7 +71,7 @@ namespace Controls.ViewModels
             // TODO: 弹出新建待办/日程的窗口
             MessageBox.Show("点击了创建按钮，弹出新建窗口");
         }
-    
+
 
         #endregion
 
@@ -196,8 +196,17 @@ namespace Controls.ViewModels
                 PriorityText = priority,
                 DueTime = dueTime,
                 IsCompleted = false,
-                CompletedChanged = UpdateProgress // 绑定进度更新回调
             };
+
+            // 关键：订阅属性变化，一旦 IsCompleted 变了立刻刷新进度
+            item.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(TodoItem.IsCompleted))
+                {
+                    UpdateProgress();
+                }
+            };
+
             TodoItems.Add(item);
         }
 
@@ -211,11 +220,11 @@ namespace Controls.ViewModels
             ProgressText = $"{CompletedCount} / {TotalCount}";
         }
 
-        
 
-    #endregion
 
-}   
+        #endregion
+
+    }
 
 
 
@@ -240,7 +249,7 @@ namespace Controls.ViewModels
         public string Description { get; set; } = string.Empty;
 
         // 状态枚举（如：线上·已结束）
-        public ScheduleStatus Status { get; set; } =ScheduleStatus.Completed;    
+        public ScheduleStatus Status { get; set; } = ScheduleStatus.Completed;
     }
 
 
@@ -263,17 +272,9 @@ namespace Controls.ViewModels
         public string Title { get; set; } = string.Empty;
         public string PriorityText { get; set; } = "普通";
         public DateTime? DueTime { get; set; }
-
-        // 用于通知外部 ViewModel 重新计算进度条
-        public Action? CompletedChanged { get; set; }
-
-        partial void OnIsCompletedChanged(bool value)
-        {
-            // 当勾选状态改变时，触发回调
-            CompletedChanged?.Invoke();
-        }
     }
 
     #endregion
+
 
 }

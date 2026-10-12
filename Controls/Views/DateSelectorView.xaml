@@ -12,10 +12,10 @@
     <UserControl.Resources>
         <!-- 日期卡片基础样式 -->
         <Style x:Key="DayItemBorderStyle" TargetType="Border">
-            <Setter Property="Width" Value="34"/>
-            <Setter Property="Height" Value="34"/>
-            <Setter Property="CornerRadius" Value="17"/>
-            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Margin" Value="0,0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
@@ -29,7 +29,7 @@
         <Style x:Key="DayTextStyle" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="12"/>
             <Setter Property="Foreground" Value="#333333"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" Value="True">
@@ -81,23 +81,36 @@
     </UserControl.Resources>
 
     <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" 
-            Background="White" Margin="10">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+     Background="{DynamicResource BgCard}">
+        <!-- 关键：用 Viewbox 包裹整个内容，实现等比缩放 -->
+        <Viewbox Stretch="Uniform" StretchDirection="Both" Margin="10,0">
+            <Grid VerticalAlignment="Center" Margin="5,0">
+                <Grid.ColumnDefinitions>
+                    <!-- 左箭头 -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- 弹性空白 -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- 日期区 -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- 弹性空白 -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- 右箭头 -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- 日期文字 -->
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- 1. 左箭头 -->
-            <Button Grid.Column="0" Style="{StaticResource NavButtonStyle}" 
-                    Content="&lt;" Command="{Binding PreviousWeekCommand}"/>
+                <!-- 1. 左箭头 -->
+                <Button Grid.Column="0" Style="{StaticResource NavButtonStyle}" 
+                        Content="&lt;" Command="{Binding PreviousWeekCommand}"/>
 
-            <!-- 用 ScrollViewer 包裹 ItemsControl，防止天数过多撑爆 UI -->
-            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" 
-                          VerticalScrollBarVisibility="Disabled" VerticalAlignment="Center">
-                <ItemsControl ItemsSource="{Binding Days}" HorizontalAlignment="Stretch" MinWidth="322">
+                <!-- 2. 弹性空白（占位，让日期区居中） -->
+                <Border Grid.Column="1"/>
+
+                <!-- 3. 日期区：固定在中间，最多 420px 宽，不会再被拉长 -->
+                <ItemsControl Grid.Column="2" ItemsSource="{Binding Days}" 
+                              HorizontalAlignment="Center"
+                              MinWidth="250" MaxWidth="420">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Rows="1"/>
@@ -116,16 +129,19 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </ScrollViewer>
 
-            <!-- 3. 右箭头 -->
-            <Button Grid.Column="2" Style="{StaticResource NavButtonStyle}" 
-                    Content="&gt;" Command="{Binding NextWeekCommand}" Margin="2,0,5,0"/>
+                <!-- 4. 弹性空白 -->
+                <Border Grid.Column="3"/>
 
-            <!-- 4. 右侧的当前日期文字 -->
-            <TextBlock Grid.Column="3" Text="{Binding CurrentDateText}" 
-                       VerticalAlignment="Center" FontSize="15" FontWeight="Medium" 
-                       Foreground="#333333" Margin="5,0,10,0"/>
-        </Grid>
+                <!-- 5. 右箭头：贴右 -->
+                <Button Grid.Column="4" Style="{StaticResource NavButtonStyle}" 
+                        Content="&gt;" Command="{Binding NextWeekCommand}"/>
+
+                <!-- 6. 右侧日期文字 -->
+                <TextBlock Grid.Column="5" Text="{Binding CurrentDateText}" 
+                           VerticalAlignment="Center" FontSize="15" FontWeight="Medium" 
+                           Foreground="#333333" Margin="15,0,0,0"/>
+            </Grid>
+        </Viewbox>
     </Border>
 </UserControl>
