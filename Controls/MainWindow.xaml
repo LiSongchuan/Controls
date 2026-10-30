@@ -6,10 +6,11 @@
         xmlns:local="clr-namespace:Controls"
         xmlns:views="clr-namespace:Controls.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="900" Width="1200">
     <Grid>
         <!--<views:DateSelectorView  Height="auto" Width="550"/>-->
 
-        <views:TasksView Height="auto"/>
+        <!--<views:TasksView Height="auto"/>-->
     </Grid>
 </Window>

@@ -12,4 +12,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Journal\ViewModel\" />
+    <Folder Include="Journal\View\" />
+  </ItemGroup>
+
 </Project>
